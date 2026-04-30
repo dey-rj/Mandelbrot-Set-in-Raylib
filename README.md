@@ -1,5 +1,5 @@
 # Mandelbrot Set Renderer
-
+<img width="1261" height="716" alt="Image" src="https://github.com/user-attachments/assets/6ae0d3c4-e681-431d-8348-2773e6c5a836" />
 A simple Mandelbrot Set visualizer built using **C++** and **raylib**.  
 This project demonstrates how mathematical concepts from complex numbers can be used to generate fractals.
 
