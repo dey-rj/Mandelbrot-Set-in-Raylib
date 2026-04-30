@@ -65,4 +65,5 @@ For each pixel:
 ### Compile
 
 ```bash
-g++ main.cpp -o mandelbrot -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+bash build.bash
+./a.out
