@@ -6,40 +6,70 @@
 
 using namespace std;
 
+#include "raylib.h"
+#include <cmath>
+
 const int screenWidth = 1280;
 const int screenHeight = 720;
-const float x_min = -2.0;
-const float x_max = 0.7;
-const float y_min = -1.2;
-const float y_max = 1.2;
-const int infinity = 2;
+
+// Complex plane bounds (double precision)
+double x_min = -2.0;
+double x_max = 0.7;
+double y_min = -1.2;
+double y_max = 1.2;
+
 const int maxIter = 40;
+const double infinity = 2.0;
 
 
-Vector2 screenToPlane(int screenX, int screenY) {
-    float x = x_min + ((float)screenX / screenWidth) * (x_max - x_min);
-    float y = y_max - ((float)screenY / screenHeight) * (y_max - y_min);
+struct Vec2d {
+    double x, y;
+};
+
+
+Vec2d screenToPlane(int screenX, int screenY) {
+    double x = x_min + ((double)screenX / screenWidth) * (x_max - x_min);
+    double y = y_max - ((double)screenY / screenHeight) * (y_max - y_min);
     return {x, y};
 }
 
-Color getColor(float iter) {
-    unsigned char c = (unsigned char) (iter * 255.0f / (float)maxIter);
-    Color color = {c, c, c, 255};
-    return color;
+
+void zoom(float scroll) {
+    if (scroll == 0) return;
+
+    if (scroll > 1) scroll = 1;
+    if (scroll < -1) scroll = -1;
+
+    Vector2 mouse = GetMousePosition();
+
+    double zoomFactor = 1.02;
+    double scale = pow(zoomFactor, -scroll);
+
+    double x_c = x_min + (mouse.x / screenWidth) * (x_max - x_min);
+    double y_c = y_max - (mouse.y / screenHeight) * (y_max - y_min);
+
+    double minRange = 1e-12;
+    if ((x_max - x_min) < minRange) return;
+
+    x_min = x_c - (x_c - x_min) * scale;
+    x_max = x_c + (x_max - x_c) * scale;
+
+    y_min = y_c - (y_c - y_min) * scale;
+    y_max = y_c + (y_max - y_c) * scale;
 }
 
-float diverge(float x0, float y0) {
-    float x = 0;
-    float y = 0;
-    float iter = 0;
-    float X, Y;
 
-    for(iter=0; iter<maxIter; iter++) {
-        X = x*x - y*y + x0;
-        Y = 2*x*y + y0;
-        if(X*X + Y*Y > infinity*infinity) {
-            break;
-        }
+int diverge(double x0, double y0) {
+    double x = 0.0;
+    double y = 0.0;
+
+    int iter;
+    for (iter = 0; iter < maxIter; iter++) {
+        double X = x * x - y * y + x0;
+        double Y = 2 * x * y + y0;
+
+        if (X * X + Y * Y > infinity * infinity) break;
+
         x = X;
         y = Y;
     }
@@ -47,36 +77,49 @@ float diverge(float x0, float y0) {
 }
 
 
+Color getColor(int iter) {
+    unsigned char c = (unsigned char)(iter * 255 / maxIter);
+    return {c, c, c, 255};
+}
+
+
 void mandelbrot() {
-    for(int screenX=0; screenX<screenWidth; screenX++) {
-        for(int screenY=0; screenY<screenHeight; screenY++) {
-            Vector2 coordinates = screenToPlane(screenX, screenY);
-            float iter = diverge(coordinates.x, coordinates.y);
+    for (int x = 0; x < screenWidth; x++) {
+        for (int y = 0; y < screenHeight; y++) {
+            Vec2d p = screenToPlane(x, y);
+            int iter = diverge(p.x, p.y);
             Color color = getColor(iter);
-            DrawPixel(screenX, screenY, color);
+            DrawPixel(x, y, color);
         }
     }
 }
 
 
-int main(void)
-{
+int main() {
     InitWindow(screenWidth, screenHeight, "Mandelbrot Set");
-    SetTargetFPS(60);               
-    
+    SetTargetFPS(60);
+
     bool changed = true;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
+
+        float scroll = GetMouseWheelMove();
+        if (scroll != 0) {
+            zoom(scroll);
+            changed = true;
+        }
+
         if (changed) {
-            ClearBackground(BLACK); 
+            ClearBackground(BLACK);
             mandelbrot();
             changed = false;
-        } 
+        }
+
         EndDrawing();
     }
-    CloseWindow();   
 
+    CloseWindow();
     return 0;
 }
 
