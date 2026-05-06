@@ -12,13 +12,13 @@ using namespace std;
 const int screenWidth = 1280;
 const int screenHeight = 720;
 
-// Complex plane bounds (double precision)
 double x_min = -2.0;
 double x_max = 0.7;
 double y_min = -1.2;
 double y_max = 1.2;
+double minRange = 1e-12;
 
-const int maxIter = 40;
+const int maxIter = 50;
 const double infinity = 2.0;
 
 
@@ -42,13 +42,13 @@ void zoom(float scroll) {
 
     Vector2 mouse = GetMousePosition();
 
-    double zoomFactor = 1.02;
+    double zoomFactor = 1.1;
     double scale = pow(zoomFactor, -scroll);
 
     double x_c = x_min + (mouse.x / screenWidth) * (x_max - x_min);
     double y_c = y_max - (mouse.y / screenHeight) * (y_max - y_min);
 
-    double minRange = 1e-12;
+    
     if ((x_max - x_min) < minRange) return;
 
     x_min = x_c - (x_c - x_min) * scale;
@@ -113,6 +113,7 @@ int main() {
         if (changed) {
             ClearBackground(BLACK);
             mandelbrot();
+            DrawText("scroll to zoom around cursor", 20, 20, 30, WHITE); 
             changed = false;
         }
 
