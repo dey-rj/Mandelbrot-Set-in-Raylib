@@ -62,11 +62,11 @@ This prevents excessive zooming where floating-point precision becomes unreliabl
 
 Each pixel $(x_{screen}, y_{screen})$ is mapped to a point $(x, y)$ in the complex plane:
 
-$ x = x_{min} + \frac{x_{screen}}{\text{width}} \cdot (x_{max} - x_{min}) $
+$x = x_{min} + \frac{x_{screen}}{\text{width}} \cdot (x_{max} - x_{min})$
 
 As y axis is inverted in raylib,
 
-$ y = y_{max} - \frac{y_{screen}}{\text{height}} \cdot (y_{max} - y_{min}) $ 
+$y = y_{max} - \frac{y_{screen}}{\text{height}} \cdot (y_{max} - y_{min})$ 
 
 ---
 
@@ -87,7 +87,7 @@ For each pixel:
 
 The grayscale color is based on iteration count:
 
-$ \text{color} = \frac{\text{iter}}{\text{maxIter}} \times 255 $
+$\text{color} = \frac{\text{iter}}{\text{maxIter}} \times 255$
 
 
 ---
@@ -98,25 +98,25 @@ The zoom is performed using mouse scroll wheel **around the mouse cursor**, maki
 
 The mouse position on the screen $(mouse_x, mouse_y)$ is mapped to a point in the complex plane as $(x_c, y_c)$:
 
-$ x_c = x_{min} + \frac{mouse_x}{\text{width}} (x_{max} - x_{min}) $
+$x_c = x_{min} + \frac{mouse_x}{\text{width}} (x_{max} - x_{min})$
 
-$ y_c = y_{max} - \frac{mouse_y}{\text{height}} (y_{max} - y_{min}) $
+$y_c = y_{max} - \frac{mouse_y}{\text{height}} (y_{max} - y_{min})$
 
 
 Zooming is controlled by a scale factor:
 
-$ \text{scale} = zoomFactor^{-scroll} $, eg. zoomFactor = 1.1
+$\text{scale} = zoomFactor^{-scroll}$, eg. zoomFactor = 1.1
 
 
 The new coordinate bounds are scaled around the cursor:
 
-$ x_{min} = x_c - (x_c - x_{min}) \cdot \text{scale} $
+$x_{min} = x_c - (x_c - x_{min}) \cdot \text{scale}$
 
-$ x_{max} = x_c + (x_{max} - x_c) \cdot \text{scale} $
+$x_{max} = x_c + (x_{max} - x_c) \cdot \text{scale}$
 
-$ y_{min} = y_c - (y_c - y_{min}) \cdot \text{scale} $
+$y_{min} = y_c - (y_c - y_{min}) \cdot \text{scale}$
 
-$ y_{max} = y_c + (y_{max} - y_c) \cdot \text{scale} $
+$y_{max} = y_c + (y_{max} - y_c) \cdot \text{scale}$
 
 ---
 
