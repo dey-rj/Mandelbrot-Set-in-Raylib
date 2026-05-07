@@ -18,7 +18,7 @@ double y_min = -1.2;
 double y_max = 1.2;
 double minRange = 1e-12;
 
-const int maxIter = 50;
+int maxIter = 50;
 const double infinity = 2.0;
 
 
@@ -33,12 +33,18 @@ Vec2d screenToPlane(int screenX, int screenY) {
     return {x, y};
 }
 
+void updateMaxIter() {
+    double zoomScale = 2.7 / (x_max - x_min);
+    maxIter = 50 + (int)(log2(zoomScale) * 10);
+}
 
 void zoom(float scroll) {
     if (scroll == 0) return;
 
     if (scroll > 1) scroll = 1;
     if (scroll < -1) scroll = -1;
+
+    updateMaxIter();
 
     Vector2 mouse = GetMousePosition();
 
@@ -79,7 +85,7 @@ int diverge(double x0, double y0) {
 
 Color getColor(int iter) {
     unsigned char c = (unsigned char)(iter * 255 / maxIter);
-    return {c, c, c, 255};
+    return {0, c, c, 255};
 }
 
 
